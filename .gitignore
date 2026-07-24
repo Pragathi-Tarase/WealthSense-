@@ -1,0 +1,27 @@
+# Python virtual environment
+venv/
+backend/venv/
+venv_win/
+backend/venv_win/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# macOS
+__MACOSX/
+.DS_Store
+
+# Environment files
+.env
+
+# Database & log files
+*.db
+*.log
+backend/backend/database_data/
+backend/backend_log.txt
+backend/prediction_cache.json
+backend/prediction_history.json

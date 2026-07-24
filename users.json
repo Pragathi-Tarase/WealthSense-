@@ -1,0 +1,37 @@
+{
+  "iqnpm6228k@wealthsense.local": {
+    "external_holdings": [
+      {
+        "symbol": "RELIANCE.BSE",
+        "quantity": 99,
+        "avg_cost": 0,
+        "source": "CAS"
+      },
+      {
+        "symbol": "TCS.BSE",
+        "quantity": 61,
+        "avg_cost": 0,
+        "source": "CAS"
+      },
+      {
+        "symbol": "HDFCBANK.BSE",
+        "quantity": 81,
+        "avg_cost": 0,
+        "source": "CAS"
+      },
+      {
+        "symbol": "INFY.BSE",
+        "quantity": 81,
+        "avg_cost": 0,
+        "source": "CAS"
+      },
+      {
+        "symbol": "ICICIBANK.BSE",
+        "quantity": 44,
+        "avg_cost": 0,
+        "source": "CAS"
+      }
+    ],
+    "name": "User"
+  }
+}

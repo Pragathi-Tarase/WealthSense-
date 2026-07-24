@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="icon" href="assets/logo.png" type="image/x-icon">
+    <title>WealthSense — Sign Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #050617;
+            --card-bg: rgba(255, 255, 255, 0.15);
+            --muted: #c2d3ed;
+            --text: #E7EEF9;
+            --accent-start: #00f8ff;
+            --accent-end: #9b59ff;
+            --success: #00d27a;
+            --error: #ff5c7c;
+            --radius: 24px;
+            --max-width: 600px;
+            --blur: 20px;
+            --border-light: rgba(255, 255, 255, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(1500px 600px at 15% 15%, rgba(17, 32, 64, 0.7), transparent 30%),
+                radial-gradient(1200px 550px at 85% 85%, rgba(30, 5, 60, 0.6), transparent 30%),
+                var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            padding: 20px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: var(--max-width);
+            padding: 35px;
+            border-radius: var(--radius);
+            background: var(--card-bg);
+            backdrop-filter: blur(var(--blur));
+            -webkit-backdrop-filter: blur(var(--blur));
+            border: 2px solid var(--border-light);
+            box-shadow:
+                0 8px 32px 0 rgba(0, 0, 0, 0.4),
+                0 0 60px rgba(0, 248, 255, 0.15);
+            margin: 20px 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            justify-content: center;
+        }
+
+        .brand img {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .name {
+            background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+            -webkit-background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+
+        .msg {
+            display: none;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .msg.show {
+            display: flex;
+        }
+
+        .msg.success {
+            background: rgba(0, 210, 122, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .msg.error {
+            background: rgba(255, 92, 124, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        .section {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: var(--text);
+            font-size: 15px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--accent-start);
+            box-shadow: 0 0 10px rgba(0, 248, 255, 0.5);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+            color: var(--bg);
+            font-size: 16px;
+            margin-top: 10px;
+            box-shadow: 0 10px 25px rgba(155, 89, 255, 0.4);
+            transition: transform 0.1s;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .link a {
+            color: var(--accent-start);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--accent-start);
+            font-weight: 600;
+        }
+
+        /* OTP Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg);
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid var(--border-light);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .otp-input {
+            font-size: 24px;
+            letter-spacing: 8px;
+            text-align: center;
+            padding: 16px;
+            margin: 20px 0;
+        }
+
+        .hint {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 4px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="card">
+        <div class="brand">
+            <img src="assets/logo.png" alt="WealthSense Logo">
+            <div>
+                <h1><span class="name">WealthSense</span></h1>
+                <p style="margin: 0; color: var(--muted); font-size: 13px;">Create Your Account</p>
+            </div>
+        </div>
+
+        <div id="message" class="msg"><span id="message-text"></span></div>
+
+        <form id="signupForm">
+            <div class="section">
+                <label for="name">Full Name</label>
+                <input id="name" type="text" placeholder="John Doe" required>
+            </div>
+
+            <div class="section">
+                <label for="email">Email Address</label>
+                <input id="email" type="email" placeholder="john@example.com" required>
+                <div class="hint">You'll receive OTP here for verification</div>
+            </div>
+
+            <div class="section">
+                <label for="phone">Phone Number</label>
+                <input id="phone" type="tel" placeholder="+919876543210" required>
+            </div>
+
+            <div class="row">
+                <div class="section">
+                    <label for="pan">PAN Number</label>
+                    <input id="pan" type="text" placeholder="ABCDE1234F" maxlength="10"
+                        style="text-transform: uppercase;" required>
+                </div>
+                <div class="section">
+                    <label for="demat">Demat Account</label>
+                    <input id="demat" type="text" placeholder="16 digits" maxlength="16" required>
+                </div>
+            </div>
+
+            <div class="section">
+                <label for="password">Password</label>
+                <input id="password" type="password" placeholder="Min. 8 characters" required>
+            </div>
+
+            <div class="section">
+                <label for="confirmPassword">Confirm Password</label>
+                <input id="confirmPassword" type="password" placeholder="Re-enter password" required>
+            </div>
+
+            <button type="submit" class="btn" id="signupBtn">Create Account</button>
+
+            <div class="link">
+                Already have an account? <a href="login.html">Login</a>
+            </div>
+
+            <p style="text-align: center; font-size: 11px; margin-top: 15px; opacity: 0.6; color: var(--muted);">
+                By signing up you agree to our Terms and Privacy Policy
+            </p>
+        </form>
+    </main>
+
+    <!-- OTP Verification Modal -->
+    <div id="otpModal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-top: 0;">Verify Your Email</h2>
+            <p style="color: var(--muted); font-size: 14px;">
+                Enter the 6-digit code sent to<br><strong id="userEmail"></strong>
+            </p>
+            <input id="otpInput" class="otp-input" type="text" maxlength="6" placeholder="000000">
+            <button id="verifyBtn" class="btn">Verify & Continue</button>
+            <p style="font-size: 12px; margin-top: 15px; color: var(--muted);">
+                Didn't receive? <a href="#" id="resendOtp" style="color: var(--accent-start);">Resend OTP</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:8000";
+        const msg = document.getElementById("message");
+        const msgText = document.getElementById("message-text");
+        const signupForm = document.getElementById("signupForm");
+        const signupBtn = document.getElementById("signupBtn");
+        const otpModal = document.getElementById("otpModal");
+        const otpInput = document.getElementById("otpInput");
+        const verifyBtn = document.getElementById("verifyBtn");
+
+        let registrationEmail = "";
+
+        function showMessage(text, type = "error") {
+            msgText.textContent = text;
+            msg.className = `msg show ${type}`;
+            setTimeout(() => msg.classList.remove("show"), 5000);
+        }
+
+        // Password validation
+        document.getElementById("password").addEventListener("input", (e) => {
+            if (e.target.value.length > 0 && e.target.value.length < 8) {
+                e.target.style.borderColor = "var(--error)";
+            } else {
+                e.target.style.borderColor = "";
+            }
+        });
+
+        // Confirm password match
+        document.getElementById("confirmPassword").addEventListener("input", (e) => {
+            const password = document.getElementById("password").value;
+            if (e.target.value && e.target.value !== password) {
+                e.target.style.borderColor = "var(--error)";
+            } else {
+                e.target.style.borderColor = "";
+            }
+        });
+
+        // PAN format
+        document.getElementById("pan").addEventListener("input", (e) => {
+            e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+        });
+
+        // Demat numeric only
+        document.getElementById("demat").addEventListener("input", (e) => {
+            e.target.value = e.target.value.replace(/\D/g, "");
+        });
+
+        // OTP numeric only
+        otpInput.addEventListener("input", (e) => {
+            e.target.value = e.target.value.replace(/\D/g, "");
+        });
+
+        // Sign up form submission
+        signupForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim().toLowerCase();
+            const phone = document.getElementById("phone").value.trim();
+            const pan = document.getElementById("pan").value.trim().toUpperCase();
+            const demat = document.getElementById("demat").value.trim();
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            // Validation
+            if (password.length < 8) {
+                showMessage("Password must be at least 8 characters", "error");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showMessage("Passwords do not match", "error");
+                return;
+            }
+
+            if (pan.length !== 10) {
+                showMessage("Invalid PAN format", "error");
+                return;
+            }
+
+            if (demat.length !== 16) {
+                showMessage("Demat number must be 16 digits", "error");
+                return;
+            }
+
+            try {
+                signupBtn.disabled = true;
+                signupBtn.textContent = "Creating Account...";
+
+                const response = await fetch(`${API_BASE}/api/auth/register`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, phone, pan, demat, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showMessage(data.detail || "Registration failed", "error");
+                    signupBtn.disabled = false;
+                    signupBtn.textContent = "Create Account";
+                    return;
+                }
+
+                // Success - show OTP modal
+                registrationEmail = email;
+                document.getElementById("userEmail").textContent = email;
+                otpModal.classList.add("show");
+                otpInput.focus();
+
+                // Auto-fill OTP in dev mode - REMOVED per user request
+                if (data.dev_otp) {
+                    console.log("Dev OTP:", data.dev_otp);
+                    // otpInput.value = data.dev_otp; // Don't autofill
+                    showMessage(`OTP sent to your email!`, "success");
+                } else {
+                    showMessage("OTP sent to your email!", "success");
+                }
+
+            } catch (err) {
+                console.error(err);
+                showMessage("Connection error. Please try again.", "error");
+                signupBtn.disabled = false;
+                signupBtn.textContent = "Create Account";
+            }
+        });
+
+        // Verify OTP
+        verifyBtn.addEventListener("click", async () => {
+            const otp = otpInput.value.trim();
+
+            if (otp.length !== 6) {
+                showMessage("Please enter 6-digit OTP", "error");
+                return;
+            }
+
+            try {
+                verifyBtn.disabled = true;
+                verifyBtn.textContent = "Verifying...";
+
+                const response = await fetch(`${API_BASE}/api/auth/verify-email`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: registrationEmail, otp })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showMessage(data.detail || "Verification failed", "error");
+                    verifyBtn.disabled = false;
+                    verifyBtn.textContent = "Verify & Continue";
+                    return;
+                }
+
+                // Success - save token and redirect
+                if (data.access_token) {
+                    localStorage.setItem("access_token", data.access_token);
+                    showMessage("Account created successfully! Redirecting...", "success");
+                    setTimeout(() => {
+                        window.location.href = "dashboard.html";
+                    }, 1500);
+                }
+
+            } catch (err) {
+                console.error(err);
+                showMessage("Connection error. Please try again.", "error");
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = "Verify & Continue";
+            }
+        });
+
+        // Resend OTP
+        document.getElementById("resendOtp").addEventListener("click", async (e) => {
+            e.preventDefault();
+            // Could implement resend logic here
+            showMessage("OTP resent to your email", "success");
+        });
+    </script>
+
+</body>
+
+</html>

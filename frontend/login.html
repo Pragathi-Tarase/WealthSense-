@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="assets/logo.png" type="image/x-icon">
+  <title>WealthSense — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #050617;
+      --card-bg: rgba(255, 255, 255, 0.15);
+      --muted: #c2d3ed;
+      --text: #E7EEF9;
+      --accent-start: #00f8ff;
+      --accent-end: #9b59ff;
+      --success: #00d27a;
+      --error: #ff5c7c;
+      --radius: 24px;
+      --max-width: 450px;
+      --blur: 20px;
+      --border-light: rgba(255, 255, 255, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(1500px 600px at 15% 15%, rgba(17, 32, 64, 0.7), transparent 30%),
+        radial-gradient(1200px 550px at 85% 85%, rgba(30, 5, 60, 0.6), transparent 30%),
+        var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      padding: 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: var(--max-width);
+      padding: 40px;
+      border-radius: var(--radius);
+      background: var(--card-bg);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      border: 2px solid var(--border-light);
+      box-shadow:
+        0 8px 32px 0 rgba(0, 0, 0, 0.4),
+        0 0 60px rgba(0, 248, 255, 0.15);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 30px;
+      justify-content: center;
+    }
+
+    .brand img {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .name {
+      background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+      -webkit-background-clip: text;
+      color: transparent;
+      font-weight: 800;
+    }
+
+    .msg {
+      display: none;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .msg.show {
+      display: flex;
+    }
+
+    .msg.error {
+      background: rgba(255, 92, 124, 0.1);
+      border: 1px solid var(--error);
+      color: var(--error);
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--accent-start);
+      box-shadow: 0 0 10px rgba(0, 248, 255, 0.5);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+      color: var(--bg);
+      font-size: 16px;
+      margin-top: 10px;
+      box-shadow: 0 10px 25px rgba(155, 89, 255, 0.4);
+      transition: transform 0.1s;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    .link {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .link a {
+      color: var(--accent-start);
+      text-decoration: none;
+      border-bottom: 1px dashed var(--accent-start);
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="card">
+    <div class="brand">
+      <img src="assets/logo.png" alt="WealthSense Logo">
+      <div>
+        <h1><span class="name">WealthSense</span></h1>
+        <p style="margin: 0; color: var(--muted); font-size: 13px; text-align: center;">Welcome Back</p>
+      </div>
+    </div>
+
+    <div id="message" class="msg"><span id="message-text"></span></div>
+
+    <form id="loginForm">
+      <div class="section">
+        <label for="email">Email Address</label>
+        <input id="email" type="email" placeholder="john@example.com" required>
+      </div>
+
+      <div class="section">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="btn" id="loginBtn">Login</button>
+
+      <div class="link">
+        Don't have an account? <a href="signup.html">Sign Up</a>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    const API_BASE = "http://127.0.0.1:8000";
+    const msg = document.getElementById("message");
+    const msgText = document.getElementById("message-text");
+    const loginForm = document.getElementById("loginForm");
+    const loginBtn = document.getElementById("loginBtn");
+
+    function showMessage(text, type = "error") {
+      msgText.textContent = text;
+      msg.className = `msg show ${type}`;
+    }
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim().toLowerCase();
+      const password = document.getElementById("password").value;
+
+      try {
+        loginBtn.disabled = true;
+        loginBtn.textContent = "Authenticating...";
+        msg.classList.remove("show");
+
+        const response = await fetch(`${API_BASE}/api/auth/login-email`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          showMessage(data.detail || "Login failed", "error");
+          loginBtn.disabled = false;
+          loginBtn.textContent = "Login";
+          return;
+        }
+
+        // Success
+        if (data.access_token) {
+          localStorage.setItem("access_token", data.access_token);
+          window.location.href = "dashboard.html";
+        }
+
+      } catch (err) {
+        console.error(err);
+        showMessage("Connection error. Please try again.", "error");
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Login";
+      }
+    });
+  </script>
+
+</body>
+
+</html>

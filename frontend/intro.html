@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/logo.png" type="image/x-icon">
+    <title>WealthSense | Analyzing...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        :root {
+            --color-dark-navy: #061022;
+            --color-violet: #8b5cf6;
+            --color-cyan: #6ee7ff;
+            --gradient-main: linear-gradient(90deg, var(--color-cyan) 0%, var(--color-violet) 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-dark-navy);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            perspective: 800px;
+            /* Crucial for 3D effect */
+        }
+
+        /* --- Animation Container & Mask --- */
+        .splash-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            transform-style: preserve-3d;
+            animation: fadeInOut 5s ease-in-out forwards;
+            position: relative;
+        }
+
+        /* Gradient Aura/Burst Effect */
+        .gradient-burst {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, var(--color-violet) 0%, var(--color-cyan) 20%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(50px);
+            opacity: 0;
+            animation: burstGlow 2.5s ease-out 0.5s forwards;
+            z-index: -1;
+        }
+
+        /* --- Logo and Title Styling --- */
+        .logo-container {
+            font-size: 5em;
+            font-weight: 900;
+            letter-spacing: -3px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .logo-icon {
+            height: 100px;
+            width: auto;
+            transform: translateZ(-300px) scale(0.1);
+            /* Start deep and small */
+            animation:
+                zoomIn 2.0s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            /* Overshoot curve */
+            z-index: 10;
+        }
+
+        .gradient-text {
+            /* Text appears slightly later */
+            opacity: 0;
+            animation: textReveal 1.5s ease-out 1s forwards;
+        }
+
+        .subtext {
+            font-size: 1.8em;
+            color: var(--color-cyan);
+            margin-top: 20px;
+            opacity: 0;
+            animation: textReveal 1.5s ease-out 1.5s forwards;
+        }
+
+        /* --- Keyframe Animations --- */
+
+        /* 1. Perspective Zoom In */
+        @keyframes zoomIn {
+            0% {
+                transform: translateZ(-500px) scale(0.1);
+                opacity: 0;
+            }
+
+            50% {
+                transform: translateZ(50px) scale(1.1);
+                /* Zoom past center */
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateZ(0) scale(1);
+                /* Settle at final position */
+                opacity: 1;
+            }
+        }
+
+        /* 2. Text Reveal */
+        @keyframes textReveal {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* 3. Gradient Burst */
+        @keyframes burstGlow {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.5);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(2);
+            }
+        }
+
+        /* 4. Full Container Fade In/Out and Redirection Timing */
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+            }
+
+            5% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="splash-container">
+        <div class="gradient-burst"></div>
+        <div class="logo-container">
+            <img src="assets/logo.png" alt="WealthSense Logo" class="logo-icon">
+            <div class="gradient-text">WealthSense<span>.</span></div>
+        </div>
+        <div class="subtext">
+            AI-Powered Financial Intelligence
+        </div>
+    </div>
+
+    <script>
+        // Set a flag in session storage to indicate the intro has been played
+        sessionStorage.setItem('introPlayed', 'true');
+
+        // Redirect to index.html after 5000 milliseconds (5 seconds)
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 5000); 
+    </script>
+
+</body>
+
+</html>

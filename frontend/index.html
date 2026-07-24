@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/logo.png" type="image/x-icon">
+    <title>WealthSense | AI-Powered Financial Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- I. Global Styles & Variables --- */
+        :root {
+            --color-dark-navy: #061022;
+            --color-mid-navy: #091630;
+            --color-text-light: #e0e7ff;
+            --color-text-muted: #94a3b8;
+            --color-cyan: #6ee7ff;
+            --color-violet: #8b5cf6;
+            --color-border-subtle: rgba(255, 255, 255, 0.08);
+            --gradient-main: linear-gradient(90deg, var(--color-cyan) 0%, var(--color-violet) 100%);
+            --transition-speed: 0.3s ease-in-out;
+            --max-width: 1200px;
+            --spacing-large: 100px;
+            --spacing-medium: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-dark-navy);
+            color: var(--color-text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: var(--color-text-light);
+            text-decoration: none;
+            transition: color var(--transition-speed);
+        }
+
+        a:hover {
+            color: var(--color-cyan);
+        }
+
+        h1, h2, h3 {
+            font-weight: 900;
+            line-height: 1.1;
+        }
+
+        section {
+            padding: var(--spacing-large) 0;
+            position: relative;
+        }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Gradient Text Helper */
+        .gradient-text {
+            background-image: var(--gradient-main);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        /* Button Styling */
+        .btn {
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform var(--transition-speed), opacity var(--transition-speed);
+        }
+
+        .btn-primary {
+            background: var(--gradient-main);
+            color: var(--color-dark-navy);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-text-light);
+            border: 2px solid;
+            border-image: var(--gradient-main) 1;
+            padding: 10px 26px;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(139, 92, 246, 0.1);
+        }
+
+        /* --- II. Header & Navigation --- */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: transparent;
+            backdrop-filter: blur(0px); 
+            transition: all 0.5s ease;
+            padding: 0; 
+        }
+
+        .header-content {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.5s ease; 
+        }
+
+        .header.scrolled .header-content {
+            max-width: 900px; 
+            margin-top: 10px;
+            padding: 12px 30px;
+            background-color: rgba(9, 22, 48, 0.85); 
+            backdrop-filter: blur(15px) saturate(180%); 
+            border: 1px solid var(--color-border-subtle);
+            border-radius: 50px; 
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            gap: 8px;
+        }
+        
+        .logo-icon {
+            height: 30px; 
+            width: auto;
+        }
+
+        .logo-container span {
+            color: var(--color-violet);
+        }
+
+        .nav-links a {
+            margin-left: 30px;
+            font-weight: 600;
+            color: var(--color-text-muted);
+        }
+
+        .nav-links a:hover {
+            color: var(--color-text-light);
+        }
+
+        .login-btn {
+            padding: 8px 20px;
+            background: var(--gradient-main);
+            color: var(--color-dark-navy);
+            font-weight: 700;
+            border-radius: 4px;
+        }
+
+        /* --- III. Hero Section & Background Effects (Stock Ticker & Lines) --- */
+        
+        .market-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            opacity: 0.6; /* Increased opacity for visibility */
+            pointer-events: none;
+            z-index: 0;
+            perspective: 1000px;
+        }
+        
+        .market-element {
+            position: absolute;
+            font-size: 14px; 
+            font-weight: 700;
+            color: var(--color-cyan);
+            opacity: 0.5; /* Less transparent text, still subtle */
+            white-space: nowrap;
+            transform-origin: top left;
+            text-shadow: 0 0 5px rgba(110, 231, 255, 0.3); /* Soft glow for visibility */
+        }
+
+        .market-line {
+            position: absolute;
+            width: 400px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.0) 0%, rgba(110, 231, 255, 0.8) 50%, rgba(139, 92, 246, 0.0) 100%); 
+            border-radius: 1px;
+            transform-origin: left center;
+        }
+        
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1; 
+            pointer-events: none;
+        }
+
+        .hero {
+            padding-top: calc(var(--spacing-large) + 60px); 
+            padding-bottom: var(--spacing-medium);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            z-index: 2; /* Ensure hero content is above background */
+            background-color: var(--color-dark-navy);
+        }
+
+        /* --- IV. Section Styles (Including Logo Alignment Fix) --- */
+        .section-header { text-align: center; margin-bottom: var(--spacing-medium); }
+        .section-header h2 { font-size: 48px; margin-bottom: 15px; }
+        .section-header p { font-size: 18px; color: var(--color-text-muted); max-width: 700px; margin: 0 auto; }
+        
+        /* Logo Alignment Fix for inline text (How It Works/Product section) */
+        .section-header p .logo-container {
+            display: inline-flex; 
+            align-items: center;
+            vertical-align: middle; 
+            margin: 0 5px; 
+            font-size: 18px; 
+            font-weight: normal; 
+            letter-spacing: normal;
+        }
+        .section-header p .logo-container .logo-icon {
+            height: 18px; 
+            margin-right: 4px;
+        }
+
+        /* --- V. Timeline Connector (Fix for Visibility) --- */
+        .timeline-section { background-color: var(--color-mid-navy); border-top: 1px solid var(--color-border-subtle); border-bottom: 1px solid var(--color-border-subtle); }
+        .timeline-wrapper { position: relative; padding-top: 50px; padding-bottom: 50px; }
+        .timeline-connector { 
+            position: absolute; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 2px; 
+            background: var(--gradient-main); 
+            z-index: 1; 
+            display: block; /* Ensure it is visible by default for desktop */
+        }
+        .timeline-steps { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px; 
+            text-align: center; 
+            position: relative; 
+            z-index: 2;
+            justify-items: center; /* Center items under grid columns */
+        }
+        .timeline-step { display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+        .step-indicator { width: 50px; height: 50px; border-radius: 50%; background: var(--color-mid-navy); border: 3px solid; border-image: var(--gradient-main) 1; display: flex; justify-content: center; align-items: center; font-size: 20px; font-weight: 700; margin-bottom: 20px; flex-shrink: 0; box-shadow: 0 0 15px rgba(139, 92, 246, 0.5); transition: all var(--transition-speed); }
+        .step-content { background-color: var(--color-dark-navy); padding: 20px; border-radius: 8px; border: 1px solid var(--color-border-subtle); text-align: center; }
+        .step-content h4 { font-size: 18px; color: var(--color-cyan); margin-bottom: 5px; }
+        .timeline-step:hover .step-indicator { transform: scale(1.1); }
+
+        /* Other Section Styles (Unchanged) */
+        .hero-kicker { font-size: 16px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--color-cyan); margin-bottom: 10px; }
+        .hero-title { font-size: 64px; margin-bottom: 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .hero-subtitle { font-size: 24px; color: var(--color-text-muted); margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto; }
+        .hero-cta-group { display: flex; justify-content: center; gap: 20px; }
+        .visual-card { background-color: var(--color-mid-navy); border: 1px solid var(--color-border-subtle); border-radius: 12px; padding: 40px; margin-top: var(--spacing-medium); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); width: 100%; max-width: 900px; margin-left: auto; margin-right: auto; backdrop-filter: blur(5px); }
+        .visual-card h3 { font-size: 20px; margin-bottom: 20px; color: var(--color-cyan); }
+        .sparkline-svg { width: 100%; height: 200px; }
+        #sparkline-path { stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+        .ticker-wrap { overflow: hidden; background-color: var(--color-mid-navy); border-top: 1px solid var(--color-border-subtle); border-bottom: 1px solid var(--color-border-subtle); padding: 15px 0; margin-top: var(--spacing-large); }
+        .ticker-inner { display: flex; animation: ticker-loop 30s linear infinite; white-space: nowrap; }
+        .ticker-item { display: inline-block; padding: 0 30px; font-size: 16px; font-weight: 600; min-width: 250px; }
+        .ticker-symbol { color: var(--color-text-light); margin-right: 10px; }
+        .ticker-price { color: var(--color-text-muted); margin-right: 10px; }
+        .change-up { color: #10b981; }
+        .change-down { color: #ef4444; }
+        @keyframes ticker-loop { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+        .grid-3-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; align-items: stretch; }
+        .product-card, .feature-card { background-color: var(--color-mid-navy); border: 1px solid var(--color-border-subtle); border-radius: 8px; padding: 30px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: space-between; transition: transform var(--transition-speed); }
+        .product-card:hover, .feature-card:hover { transform: translateY(-5px); border-color: var(--color-violet); }
+        .card-icon { font-size: 32px; margin-bottom: 15px; background: var(--gradient-main); -webkit-background-clip: text; background-clip: text; color: transparent; width: fit-content; }
+        .product-card h3, .feature-card h3 { font-size: 20px; margin-bottom: 10px; }
+        .product-card p, .feature-card p { color: var(--color-text-muted); flex-grow: 1; }
+        .cta-banner { background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.2) 0%, rgba(6, 16, 34, 0) 70%), var(--color-mid-navy); padding: var(--spacing-large) 0; text-align: center; border-top: 1px solid var(--color-border-subtle); }
+        .cta-banner h2 { font-size: 40px; margin-bottom: 20px; }
+        .cta-banner p { font-size: 20px; color: var(--color-text-muted); margin-bottom: 40px; }
+        .footer { background-color: var(--color-mid-navy); padding: var(--spacing-medium) 0; border-top: 1px solid var(--color-border-subtle); font-size: 14px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 30px; }
+        .footer-col h4 { font-size: 16px; margin-bottom: 15px; color: var(--color-text-light); }
+        .footer-col a { display: block; margin-bottom: 8px; color: var(--color-text-muted); }
+        .footer-bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--color-border-subtle); text-align: center; color: var(--color-text-muted); }
+
+        /* Responsiveness */
+        @media (max-width: 980px) { 
+            .hero-title { font-size: 48px; } .hero-subtitle { font-size: 20px; } 
+            .grid-3-col { grid-template-columns: repeat(2, 1fr); } 
+            .timeline-steps { grid-template-columns: repeat(2, 1fr); }
+            .timeline-connector { display: none; } /* Hide connector on smaller grids */
+            .timeline-step { align-items: flex-start; text-align: left; padding-top: 0; }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); } .nav-links { display: none; }
+            .header.scrolled .header-content { max-width: 100%; border-radius: 0; margin-top: 0; }
+        }
+        @media (max-width: 720px) { 
+            .hero-title { font-size: 36px; } .hero-subtitle { font-size: 18px; } .hero-cta-group { flex-direction: column; gap: 15px; }
+            .grid-3-col, .timeline-steps { grid-template-columns: 1fr; } 
+            .footer-grid { grid-template-columns: 1fr; } .footer-col:not(:first-child) { margin-top: 20px; } 
+            .header-content { padding: 10px 20px; } .nav-links, .login-btn { display: none; } 
+            .logo-container { font-size: 20px; }
+            .header.scrolled .header-content { max-width: 100%; border-radius: 0; margin-top: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="market-background">
+        <div class="market-line" id="line1" style="top: 10%; left: 0%; transform: rotate(15deg);"></div>
+        <div class="market-line" id="line2" style="top: 35%; right: 0%; transform: rotate(-5deg);"></div>
+        <div class="market-line" id="line3" style="top: 70%; left: 10%; transform: rotate(10deg);"></div>
+        
+        <div class="market-element" id="num1" style="top: 5%; left: 10%;">TSLA +3.10%</div>
+        <div class="market-element" id="num2" style="top: 20%; left: 70%;">GOOG -0.88</div>
+        <div class="market-element" id="num3" style="top: 45%; left: 30%;">NVDA +2.40%</div>
+        <div class="market-element" id="num4" style="top: 60%; left: 80%;">AAPL 185.20</div>
+        <div class="market-element" id="num5" style="top: 90%; left: 5%;">MSFT 365.40</div>
+        <div class="market-element" id="num6" style="top: 75%; left: 45%;">SPY +0.95%</div>
+        <div class="market-element" id="num7" style="top: 25%; left: 40%;">AMZN -1.22%</div>
+        <div class="market-element" id="num8" style="top: 55%; left: 5%;">META 401.35</div>
+    </div>
+    
+    <div id="particles-js"></div>
+
+    <header class="header">
+        <div class="header-content">
+            <a href="#home" class="logo-container">
+                <img src="assets/logo.png" alt="WealthSense Logo" class="logo-icon"> 
+                WealthSense<span>.</span>
+            </a>
+            <nav class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#product">Product</a>
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+            </nav>
+            <a href="login.html" class="btn login-btn">Login</a>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="container">
+            <p class="hero-kicker">Future-Proof Your Wealth</p>
+            <h1 class="hero-title">
+                Unleash <span class="gradient-text">AI-Driven</span> Financial Precision
+            </h1>
+            <p class="hero-subtitle">
+                WealthSense uses proprietary deep-learning models to analyze market sentiment, predict trends, and automate investment strategies for superior returns.
+            </p>
+            <div class="hero-cta-group">
+                <a href="#features" class="btn btn-primary">Start Analyzing Now</a>
+                <a href="#" class="btn btn-secondary">Watch Demo</a>
+            </div>
+
+            <div class="visual-card scroll-reveal">
+                <h3>Simulated AI-Portfolio Performance (YTD)</h3>
+                <svg viewBox="0 0 800 200" class="sparkline-svg">
+                    <defs>
+                        <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="var(--color-cyan)"/>
+                            <stop offset="100%" stop-color="var(--color-violet)"/>
+                        </linearGradient>
+                    </defs>
+                    <polyline id="sparkline-path"
+                        fill="none"
+                        stroke="url(#line-gradient)"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        points="
+                            0,180 100,100 200,120 300,80 400,140 500,60 600,160 700,100 800,40
+                        "
+                    />
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <div class="ticker-wrap">
+        <div class="ticker-inner">
+            <span class="ticker-item"><span class="ticker-symbol">AAPL</span> <span class="ticker-price">185.20</span> <span class="change-up">+1.25%</span></span>
+            <span class="ticker-item"><span class="ticker-symbol">GOOG</span> <span class="ticker-price">140.75</span> <span class="change-down">-0.88%</span></span>
+            <span class="ticker-item"><span class="ticker-symbol">TSLA</span> <span class="ticker-price">230.15</span> <span class="change-up">+3.10%</span></span>
+            <span class="ticker-item"><span class="ticker-symbol">MSFT</span> <span class="ticker-price">365.40</span> <span class="change-up">+0.55%</span></span>
+            <span class="ticker-item"><span class="ticker-symbol">NVDA</span> <span class="ticker-price">500.99</span> <span class="change-up">+2.40%</span></span>
+            <span class="ticker-item"><span class="ticker-symbol">SPY</span> <span class="ticker-price">480.12</span> <span class="change-up">+0.95%</span></span>
+
+            <span class="ticker-item"><span class="ticker-symbol">AAPL</span> <span class="ticker-price">185.20</span> <span class="change-up">+1.25%</span></span>
+            <span class="ticker-item"><span class="ticker-symbol">GOOG</span> <span class="ticker-price">140.75</span> <span class="change-down">-0.88%</span></span>
+            <span class="ticker-item"><span class="ticker-symbol">TSLA</span> <span class="ticker-price">230.15</span> <span class="change-up">+3.10%</span></span>
+            <span class="ticker-item"><span class="ticker-symbol">MSFT</span> <span class="ticker-price">365.40</span> <span class="change-up">+0.55%</span></span>
+            <span class="ticker-item"><span class="ticker-symbol">NVDA</span> <span class="ticker-price">500.99</span> <span class="change-up">+2.40%</span></span>
+            <span class="ticker-item"><span class="ticker-symbol">SPY</span> <span class="ticker-price">480.12</span> <span class="change-up">+0.95%</span></span>
+        </div>
+    </div>
+
+    <section id="product">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="gradient-text">Product at a Glance</h2>
+                <p>Your path to smarter investing starts here. A quick look at how WealthSense redefines financial management.</p>
+            </div>
+            <div class="grid-3-col">
+                <div class="product-card scroll-reveal">
+                    <div>
+                        <div class="card-icon">⚡</div>
+                        <h3>Predictive Analytics</h3>
+                        <p>Our deep learning models forecast market shifts with over 85% accuracy, giving you a crucial edge.</p>
+                    </div>
+                </div>
+                <div class="product-card scroll-reveal">
+                    <div>
+                        <div class="card-icon">🧠</div>
+                        <h3>Cognitive Risk Profiling</h3>
+                        <p>Go beyond questionnaires. Our AI analyzes your actual trading behavior to build a dynamic, truly personalized risk model.</p>
+                    </div>
+                </div>
+                <div class="product-card scroll-reveal">
+                    <div>
+                        <div class="card-icon">💰</div>
+                        <h3>Optimized Portfolio</h3>
+                        <p>Continuously re-balance your holdings automatically based on real-time AI sentiment and macroeconomic indicators.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="gradient-text">Core Features</h2>
+                <p>Advanced tools designed to automate, analyze, and elevate your entire financial strategy.</p>
+            </div>
+            <div class="grid-3-col">
+                <div class="feature-card scroll-reveal">
+                    <div>
+                        <div class="card-icon">📈</div>
+                        <h3>Real-time Trend Spotting</h3>
+                        <p>Identify emerging opportunities and hidden risks across global markets as they happen.</p>
+                    </div>
+                </div>
+                <div class="feature-card scroll-reveal">
+                    <div>
+                        <div class="card-icon">🛡️</div>
+                        <h3>Automated Hedging</h3>
+                        <p>AI-driven derivatives trading to automatically protect your downside risk in volatile periods.</p>
+                    </div>
+                </div>
+                <div class="feature-card scroll-reveal">
+                    <div>
+                        <div class="card-icon">💬</div>
+                        <h3>Natural Language Reporting</h3>
+                        <p>Get complex financial reports summarized into clear, actionable, natural language text.</p>
+                    </div>
+                </div>
+                <div class="feature-card scroll-reveal">
+                    <div>
+                        <div class="card-icon">🌎</div>
+                        <h3>Global Asset Coverage</h3>
+                        <p>Analyze and trade stocks, bonds, crypto, and commodities from a single, unified interface.</p>
+                    </div>
+                </div>
+                <div class="feature-card scroll-reveal">
+                    <div>
+                        <div class="card-icon">📱</div>
+                        <h3>Mobile-First Management</h3>
+                        <p>Full-featured mobile application for managing your investments anytime, anywhere.</p>
+                    </div>
+                </div>
+                <div class="feature-card scroll-reveal">
+                    <div>
+                        <div class="card-icon">🔒</div>
+                        <h3>Enterprise-Grade Security</h3>
+                        <p>Advanced encryption and multi-factor authentication protect your data and assets.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="timeline-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="gradient-text">How It Works</h2>
+                <p>Three simple steps to connect, analyze, and optimize your financial future with WealthSense.</p>
+            </div>
+            <div class="timeline-wrapper">
+                <div class="timeline-connector"></div>
+
+                <div class="timeline-steps">
+                    <div class="timeline-step">
+                        <div class="step-indicator" data-step="1">1</div>
+                        <div class="step-content scroll-reveal">
+                            <h4>Connect & Configure</h4>
+                            <p>Securely link your existing brokerage and banking accounts. Customize your goals and risk tolerance profile.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-indicator" data-step="2">2</div>
+                        <div class="step-content scroll-reveal">
+                            <h4>AI Deep Analysis</h4>
+                            <p>WealthSense’s AI engine analyzes your portfolio, identifying inefficiencies and high-potential areas within seconds.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-indicator" data-step="3">3</div>
+                        <div class="step-content scroll-reveal">
+                            <h4>Automate & Grow</h4>
+                            <p>Approve the AI-suggested strategy and let our system automatically execute trades and monitor for optimal performance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-banner">
+        <div class="container">
+            <h2 class="gradient-text">Ready to Invest with Intelligence?</h2>
+            <p>Join the future of finance. Get started with your free risk assessment today.</p>
+            <a href="login.html" class="btn btn-primary">Sign Up for Free</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo-container"><img src="assets/logo.png" alt="WealthSense Logo" class="logo-icon" style="height: 24px; margin-right: 4px;"> WealthSense<span>.</span></div>
+                    <p style="margin-top: 10px; color: var(--color-text-muted);">AI-Powered Financial Intelligence. Simplifying wealth management for the modern investor.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <a href="#product">Overview</a>
+                    <a href="#features">Core Features</a>
+                    <a href="#">Pricing</a>
+                    <a href="#">Support</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="#">About Us</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Newsroom</a>
+                    <a href="#">Contact</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Risk Disclosure</a>
+                    <a href="#">Security</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2025 WealthSense. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+    <script>
+        // --- Single Script Block for Functionality and Animation ---
+        
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 1. Setup Animations (Initial Hero, Sparkline, Scroll Reveal)
+        function setupAnimations() {
+            // Initial animation for Hero content
+            gsap.from(".hero-kicker, .hero-title, .hero-subtitle, .hero-cta-group", {
+                duration: 1, y: 30, opacity: 0, stagger: 0.1, ease: "power3.out"
+            });
+
+            // Sparkline SVG Path Animation
+            const sparklinePath = document.getElementById('sparkline-path');
+            if (sparklinePath) {
+                const length = sparklinePath.getTotalLength();
+                sparklinePath.style.strokeDasharray = length;
+                sparklinePath.style.strokeDashoffset = length;
+                gsap.to(sparklinePath, {
+                    strokeDashoffset: 0, duration: 2.5, ease: "power2.inOut", delay: 0.5
+                });
+            }
+
+            // Scroll Reveal for Section Cards
+            document.querySelectorAll('.scroll-reveal').forEach(element => {
+                gsap.from(element, { 
+                    opacity: 0, y: 50, duration: 0.8, ease: "power2.out", 
+                    scrollTrigger: { trigger: element, start: "top 85%", toggleActions: "play none none none" } 
+                });
+            });
+        }
+        
+        // 2. Header Scroll Behavior
+        function handleHeaderScroll() {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 50) { 
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        }
+        
+        // 3. Complex Background GSAP Animation (Rolling Charts/Data)
+        function setupBackgroundAnimations() {
+            // 3.1 Line/Chart Movement (subtle float/rotate)
+            gsap.utils.toArray('.market-line').forEach((line, i) => {
+                const duration = 15 + i * 5; 
+                gsap.to(line, {
+                    x: (i % 2 === 0 ? 800 : -800), 
+                    y: (i % 2 === 0 ? 50 : -50),
+                    rotation: line.style.transform.includes('rotate') ? `+=${(i % 2 === 0 ? 5 : -5)}` : (i % 2 === 0 ? 5 : -5), 
+                    ease: "none",
+                    duration: duration,
+                    repeat: -1,
+                    yoyo: true, 
+                });
+            });
+
+            // 3.2 Numerical/Data Movement (Infinite Horizontal Flow)
+            gsap.utils.toArray('.market-element').forEach((num, i) => {
+                const startX = window.innerWidth * (1 + (i * 0.2)); 
+                gsap.set(num, { x: startX }); 
+
+                const duration = 20 + i * 3; // Staggered speed
+
+                gsap.to(num, {
+                    x: -num.offsetWidth, 
+                    ease: "none",
+                    duration: duration,
+                    repeat: -1,
+                    modifiers: {
+                        x: (x) => {
+                            if (parseFloat(x) < -num.offsetWidth) {
+                                return window.innerWidth;
+                            }
+                            return x;
+                        }
+                    }
+                });
+            });
+        }
+
+        // 4. Timeline Connector Logic (Ensures line connects the dots)
+        function updateTimelineConnector() {
+            const connector = document.querySelector('.timeline-connector');
+            const steps = document.querySelectorAll('.timeline-step .step-indicator');
+
+            if (!connector || steps.length < 2) return;
+
+            const wrapper = document.querySelector('.timeline-wrapper');
+            const wrapperRect = wrapper.getBoundingClientRect();
+            
+            // Get positions relative to the timeline wrapper
+            const firstStepRect = steps[0].getBoundingClientRect();
+            const lastStepRect = steps[steps.length - 1].getBoundingClientRect();
+
+            // Calculate start and end Y relative to the parent wrapper
+            const startY = firstStepRect.top + firstStepRect.height / 2 - wrapperRect.top;
+            const endY = lastStepRect.top + lastStepRect.height / 2 - wrapperRect.top;
+            
+            connector.style.top = `${startY}px`;
+            connector.style.height = `${endY - startY}px`;
+            
+            // Check if it should be visible (3-column layout)
+            const timelineSteps = document.querySelector('.timeline-steps');
+            const columns = window.getComputedStyle(timelineSteps).gridTemplateColumns.split(' ').length;
+            connector.style.display = (columns === 3) ? 'block' : 'none';
+        }
+
+        // 5. Particles.js Background
+        function setupParticles() {
+            particlesJS('particles-js', {
+                "particles": { "number": { "value": 80, "density": { "enable": true, "value_area": 800 } }, "color": { "value": "#8b5cf6" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5, "random": true }, "size": { "value": 3, "random": true }, "line_linked": { "enable": true, "distance": 150, "color": "#6ee7ff", "opacity": 0.4, "width": 1 }, "move": { "enable": true, "speed": 1, "direction": "none", "random": true, "straight": false, "out_mode": "out" } },
+                "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" }, "resize": true } },
+                "retina_detect": true
+            });
+        }
+        
+        // 6. Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            setupParticles();
+            setupAnimations();
+            setupBackgroundAnimations(); 
+            updateTimelineConnector(); 
+            handleHeaderScroll(); 
+        });
+
+        // Event Listeners
+        window.addEventListener('resize', updateTimelineConnector);
+        window.addEventListener('scroll', handleHeaderScroll);
+        ScrollTrigger.addEventListener("refreshInit", updateTimelineConnector); // Update on GSAP refresh
+    </script>
+    
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from typing import Optional
+import os
+from config import EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASSWORD, EMAIL_FROM_NAME, DEV_SHOW_OTP
+
+class EmailService:
+    """Service for sending emails (OTP, welcome, etc.)"""
+    
+    @staticmethod
+    def send_otp_email(to_email: str, otp: str, name: str = "User") -> bool:
+        """Send OTP verification email"""
+        
+        # In dev mode, just print to console
+        if DEV_SHOW_OTP or not EMAIL_USER or not EMAIL_PASSWORD:
+            print(f"\n{'='*60}")
+            print(f"[EMAIL] EMAIL OTP (DEV MODE)")
+            print(f"{'='*60}")
+            print(f"To: {to_email}")
+            print(f"Name: {name}")
+            print(f"OTP: {otp}")
+            print(f"{'='*60}\n")
+            return True
+        
+        try:
+            # Create message
+            msg = MIMEMultipart('alternative')
+            msg['From'] = f"{EMAIL_FROM_NAME} <{EMAIL_USER}>"
+            msg['To'] = to_email
+            msg['Subject'] = '🔐 Verify Your WealthSense Account'
+            
+            # HTML email body
+            html = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                    .header {{ background: linear-gradient(135deg, #00f8ff, #9b59ff); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
+                    .header h1 {{ color: white; margin: 0; }}
+                    .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
+                    .otp-box {{ background: white; padding: 20px; text-align: center; margin: 20px 0; border-radius: 8px; border: 2px solid #00f8ff; }}
+                    .otp {{ font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #00f8ff; }}
+                    .footer {{ text-align: center; margin-top: 20px; font-size: 12px; color: #666; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🔐 Email Verification</h1>
+                    </div>
+                    <div class="content">
+                        <p>Hi <strong>{name}</strong>,</p>
+                        <p>Welcome to WealthSense! To complete your registration, please verify your email address with the code below:</p>
+                        
+                        <div class="otp-box">
+                            <div class="otp">{otp}</div>
+                        </div>
+                        
+                        <p><strong>This code expires in 10 minutes.</strong></p>
+                        <p>If you didn't request this verification, please ignore this email.</p>
+                        
+                        <div class="footer">
+                            <p>© 2026 WealthSense - AI-Powered Portfolio Management</p>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            
+            # Attach HTML content
+            msg.attach(MIMEText(html, 'html'))
+            
+            # Send email
+            with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
+                server.starttls()
+                server.login(EMAIL_USER, EMAIL_PASSWORD)
+                server.send_message(msg)
+            
+            print(f"[SUCCESS] OTP email sent to {to_email}")
+            return True
+            
+        except Exception as e:
+            print(f"[ERROR] Email sending failed: {str(e)}")
+            print(f"[EMAIL] DEV MODE - OTP for {to_email}: {otp}")
+            return False
+    
+    @staticmethod
+    def send_welcome_email(to_email: str, name: str) -> bool:
+        """Send welcome email after successful registration"""
+        
+        if DEV_SHOW_OTP or not EMAIL_USER:
+            print(f"[EMAIL] Welcome email would be sent to {to_email}")
+            return True
+        
+        try:
+            msg = MIMEMultipart('alternative')
+            msg['From'] = f"{EMAIL_FROM_NAME} <{EMAIL_USER}>"
+            msg['To'] = to_email
+            msg['Subject'] = '🎉 Welcome to WealthSense!'
+            
+            html = f"""
+            <!DOCTYPE html>
+            <html>
+            <body style="font-family: Arial; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #00f8ff, #9b59ff); padding: 30px; text-align: center;">
+                    <h1 style="color: white;">Welcome to WealthSense! 🎉</h1>
+                </div>
+                <div style="padding: 30px; background: #f9f9f9;">
+                    <p>Hi <strong>{name}</strong>,</p>
+                    <p>Your account has been successfully created!</p>
+                    <p>You can now:</p>
+                    <ul>
+                        <li>📊 Track your portfolio in real-time</li>
+                        <li>🤖 Get AI-powered stock predictions</li>
+                        <li>💬 Chat with our AI assistant</li>
+                        <li>📰 Stay updated with market news</li>
+                    </ul>
+                    <p style="text-align: center; margin-top: 30px;">
+                        <a href="http://127.0.0.1:8000/login.html" style="background: #00f8ff; color: #000; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">Login Now</a>
+                    </p>
+                </div>
+            </body>
+            </html>
+            """
+            
+            msg.attach(MIMEText(html, 'html'))
+            
+            with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
+                server.starttls()
+                server.login(EMAIL_USER, EMAIL_PASSWORD)
+                server.send_message(msg)
+            
+            return True
+            
+        except Exception as e:
+            print(f"Welcome email failed: {str(e)}")
+            return False
+
+email_service = EmailService()
