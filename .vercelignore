@@ -1,0 +1,16 @@
+venv
+venv_win
+backend/venv
+backend/venv_win
+__pycache__
+*.pyc
+.git
+.vscode
+__MACOSX
+.DS_Store
+*.db
+*.log
+backend/backend/database_data
+backend/backend_log.txt
+backend/prediction_cache.json
+backend/prediction_history.json
