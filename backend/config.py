@@ -55,8 +55,8 @@ EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD", "")
 EMAIL_FROM_NAME = os.environ.get("EMAIL_FROM_NAME", "WealthSense")
 
 # Database Configuration
-# Default to MAMP MySQL (root/root on port 8889)
+# Default to local SQLite for local development (production uses Vercel DATABASE_URL environment variable)
 DATABASE_URL = os.environ.get(
     "DATABASE_URL", 
-    "mysql+pymysql://root:root@localhost:8889/wealthsense"
+    "sqlite:///./wealthsense.db"
 )
