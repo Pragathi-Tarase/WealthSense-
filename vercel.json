@@ -1,5 +1,11 @@
 {
   "version": 2,
+  "functions": {
+    "api/index.py": {
+      "includeFiles": "backend/ml/saved_models/**",
+      "excludeFiles": "frontend/**"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
