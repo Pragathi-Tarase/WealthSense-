@@ -3,12 +3,7 @@
   "functions": {
     "api/index.py": {
       "includeFiles": "backend/ml/saved_models/**",
-      "excludeFiles": [
-        "frontend/**",
-        ".git/**",
-        ".vercel/**",
-        ".vscode/**"
-      ]
+      "excludeFiles": "{frontend/**,.git/**,.vercel/**,.vscode/**}"
     }
   },
   "rewrites": [
