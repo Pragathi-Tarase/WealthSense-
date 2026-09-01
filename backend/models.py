@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any
 from datetime import datetime
 
 class LoginRequest(BaseModel):
@@ -61,7 +61,7 @@ class ChatResponse(BaseModel):
     chat_id: str
     messages: List[ChatMessage]
 
-# Prediction Models
+# Prediction Models — Preserving Backward Compatibility
 class PredictionTimeframe(BaseModel):
     percent_change: float
     target_price: float
@@ -69,10 +69,10 @@ class PredictionTimeframe(BaseModel):
 class StockPrediction(BaseModel):
     symbol: str
     name: str
-    sector: str
-    industry: str
+    sector: str = "Indian Stock Market"
+    industry: str = "Financial Services / Equity"
     current_price: float
-    combined_score: float
+    combined_score: float = 0.0
     predictions: Dict[str, PredictionTimeframe]
     confidence: str
     confidence_percent: float
@@ -80,6 +80,15 @@ class StockPrediction(BaseModel):
     recommendation: str
     reasoning: List[str]
     generated_at: str
+    
+    # Phase 2 ML Additions (Optional fields for backward compatibility)
+    is_ml_model: Optional[bool] = True
+    model_name: Optional[str] = "RandomForestRegressor"
+    metrics: Optional[Dict[str, float]] = None
+    feature_importance: Optional[List[Dict[str, Any]]] = None
+    disclaimer: Optional[str] = None
+
+    model_config = {"protected_namespaces": ()}
 
 class PredictionListResponse(BaseModel):
     predictions: List[StockPrediction]
@@ -88,4 +97,17 @@ class PredictionListResponse(BaseModel):
 
 class PredictionRequest(BaseModel):
     symbol: str
+    horizon: Optional[int] = 30
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
     force_refresh: bool = False
+
+class MLModelMetrics(BaseModel):
+    mae: float
+    rmse: float
+    r2: float
+    directional_accuracy: float
+
+class FeatureImportanceItem(BaseModel):
+    feature: str
+    importance: float

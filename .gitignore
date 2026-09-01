@@ -25,3 +25,4 @@ backend/backend/database_data/
 backend/backend_log.txt
 backend/prediction_cache.json
 backend/prediction_history.json
+.vercel

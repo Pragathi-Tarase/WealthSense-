@@ -20,3 +20,6 @@ yfinance
 pymysql
 email-validator
 ta
+scikit-learn
+joblib
+scipy
