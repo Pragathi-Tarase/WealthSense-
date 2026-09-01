@@ -34,18 +34,14 @@ def get_user_from_token(authorization: Optional[str]) -> dict:
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-
-
 @router.get("/overview")
 async def get_dashboard_overview(authorization: Optional[str] = Header(None)):
     user = get_user_from_token(authorization)
     
-    # Get top Indian stocks
     indian_stocks = StockService.get_supported_indian_stocks()
     symbols = [s["symbol"] for s in indian_stocks[:5]]
     quotes = await StockService.get_multiple_quotes(symbols)
     
-    # Get market news
     news = await NewsService.get_market_news()
     
     return {
@@ -59,7 +55,6 @@ async def get_portfolio_data(authorization: Optional[str] = Header(None)):
     user_token = get_user_from_token(authorization)
     email = user_token["email"]
     
-    # Check if we have a real user in UserService with a broker token
     user_profile = UserService.get_user(email)
     provider = user_token.get("provider") or (user_profile.get("provider") if user_profile else "email")
     broker_token = user_profile.get("broker_access_token") if user_profile else None
@@ -67,28 +62,21 @@ async def get_portfolio_data(authorization: Optional[str] = Header(None)):
     holding_configs = []
 
     if provider != "email":
-        # 1. Broker Login (Kite/OAuth) - Use real-time broker holdings ONLY
         if broker_token:
             print(f"[Dashboard] OAUTH USER: Fetching holdings for {email} from Kite")
             holding_configs = await StockService.get_kite_holdings(broker_token)
     else:
-        # 2. Email Login - Prioritize CAS uploaded holdings
         print(f"[Dashboard] EMAIL USER: Prioritizing CAS holdings for {email}")
         holding_configs = user_profile.get("external_holdings", []) if user_profile else []
             
-    # Final check: if still empty, return empty portfolio
     if not holding_configs:
         print(f"[Dashboard] No holdings found for {email} via {provider} flow.")
         
-        # FALLBACK: Randomize holdings based on user email for variety
-        # This complies with "Change values based on each log in" request
         import random
-        # Use email hash as seed so it's consistent for the same user but different for others
         random.seed(hash(email))
         
         print(f"[Dashboard] Injecting DYNAMIC fallback holdings for {email}")
         
-        # Pool of possible stocks
         stock_pool = [
             {"symbol": "RELIANCE.BSE", "base_price": 2500},
             {"symbol": "TCS.BSE", "base_price": 2400},
@@ -100,16 +88,13 @@ async def get_portfolio_data(authorization: Optional[str] = Header(None)):
             {"symbol": "ITC.BSE", "base_price": 450},
         ]
         
-        # Pick 3 to 6 random stocks
         num_stocks = random.randint(3, 6)
         selected_stocks = random.sample(stock_pool, num_stocks)
         
         holding_configs = []
         for stock in selected_stocks:
             qty = random.randint(10, 200)
-            # Randomize cost within +/- 20% of base price
             avg_cost = stock["base_price"] * (1 + random.uniform(-0.2, 0.2))
-            # Current price is also randomized relative to base
             curr_price = stock["base_price"] * (1 + random.uniform(-0.15, 0.15))
             
             holding_configs.append({
@@ -124,9 +109,7 @@ async def get_portfolio_data(authorization: Optional[str] = Header(None)):
     invested_value = 0.0
     
     for h in holding_configs:
-        # Get real-time price from Alpha Vantage for accurate dashboard value
         quote = await StockService.get_quote(h["symbol"])
-        # If API gives error (e.g. rate limit), fallback to Kite's 'current_price' if available
         current_price = quote.get("price") or h.get("current_price") or h["avg_cost"]
         
         value = h["quantity"] * current_price
@@ -159,15 +142,11 @@ async def get_portfolio_data(authorization: Optional[str] = Header(None)):
         holdings=holdings
     )
 
-
 @router.get("/charts")
 async def get_chart_data(authorization: Optional[str] = Header(None), symbol: str = "RELIANCE.BSE"):
     user = get_user_from_token(authorization)
     
-    # Get daily data for chart
     daily_data = await StockService.get_daily(symbol)
-    
-    # Get intraday data
     intraday_data = await StockService.get_intraday(symbol, "15min")
     
     return {
@@ -181,13 +160,11 @@ async def get_ai_portfolio_analysis(authorization: Optional[str] = Header(None))
     user_token = get_user_from_token(authorization)
     email = user_token["email"]
     
-    # Get portfolio data
     portfolio = await get_portfolio_data(authorization)
     
     if not portfolio.holdings:
         return {"analysis": "No holdings found. Please upload your CAS statement or link a broker to see an AI analysis of your portfolio."}
         
-    # Generate Prompt
     holdings_str = "\n".join([f"{h['symbol'] if isinstance(h, dict) else h.symbol}: {h['quantity'] if isinstance(h, dict) else h.quantity} units, Gain/Loss: {h['gain_loss_percent'] if isinstance(h, dict) else h.gain_loss_percent}%" for h in portfolio.holdings])
     
     prompt = (
@@ -205,10 +182,12 @@ async def get_ai_portfolio_analysis(authorization: Optional[str] = Header(None))
         return {"analysis": "AI Analysis is currently unavailable. Please configure the Gemini API Key in the backend."}
         
     try:
-        import google.generativeai as genai
-        genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-flash-latest')
-        response = model.generate_content(prompt)
+        from google import genai
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        response = client.models.generate_content(
+            model='gemini-3.6-flash',
+            contents=prompt
+        )
         return {"analysis": response.text}
     except Exception as e:
         error_msg = str(e)

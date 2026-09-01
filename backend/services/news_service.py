@@ -1,5 +1,5 @@
 import requests
-import google.generativeai as genai
+from google import genai
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 from config import NEWSAPI_API_KEY, GEMINI_API_KEY
@@ -9,8 +9,15 @@ NEWS_CACHE: Dict[str, Dict] = {}
 CACHE_TTL = 3600  # 1 hour
 
 # Global Sentiment Cache (Headlines -> result)
-# This prevents re-analyzing the same headlines every time the user refreshes
 SENTIMENT_CACHE: Dict[str, Dict] = {}
+
+# Initialize google-genai client
+gemini_client: Optional[genai.Client] = None
+if GEMINI_API_KEY:
+    try:
+        gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+    except Exception as e:
+        print(f"[NewsService] Gemini client initialization error: {e}")
 
 class NewsService:
     BASE_URL = "https://newsapi.org/v2"
@@ -38,10 +45,9 @@ class NewsService:
     
     @classmethod
     async def _add_sentiment(cls, articles: List[Dict]):
-        if not GEMINI_API_KEY or not articles:
+        if not GEMINI_API_KEY or not gemini_client or not articles:
             return articles
             
-        # 1. Fill from cache first
         remaining_articles = []
         for article in articles:
             if article['title'] in SENTIMENT_CACHE:
@@ -54,7 +60,6 @@ class NewsService:
             return articles
 
         try:
-            # Analyze remaining (up to 5)
             sample = remaining_articles[:5]
             headlines = "\n".join([f"{i}. {a['title']}" for i, a in enumerate(sample)])
             prompt = (
@@ -64,9 +69,10 @@ class NewsService:
                 f"Headlines:\n{headlines}"
             )
             
-            genai.configure(api_key=GEMINI_API_KEY)
-            model = genai.GenerativeModel('gemini-flash-latest')
-            response = model.generate_content(prompt)
+            response = gemini_client.models.generate_content(
+                model='gemini-3.6-flash',
+                contents=prompt
+            )
             
             lines = response.text.strip().split('\n')
             for line in lines:
@@ -83,7 +89,6 @@ class NewsService:
                             sample[idx]['sentiment'] = sentiment_tag
                             sample[idx]['ai_insight'] = reason
                             
-                            # Cache this headline's sentiment
                             SENTIMENT_CACHE[sample[idx]['title']] = {
                                 "sentiment": sentiment_tag,
                                 "ai_insight": reason
@@ -94,7 +99,6 @@ class NewsService:
         except Exception as e:
             error_msg = str(e)
             print(f"[NewsService] Sentiment Analysis Error: {error_msg}")
-            # If rate limited, we gracefully return articles without sentiment
             if "429" in error_msg:
                 print("[NewsService] Rate limit hit. Serving news without AI insights.")
             
@@ -142,10 +146,8 @@ class NewsService:
                     "image_url": article.get("image_url" if is_newsdata else "urlToImage")
                 })
             
-            # Add AI Sentiment
             articles = await cls._add_sentiment(articles)
 
-            # Fallback
             if not articles and symbol != "Indian Market":
                 return await cls.get_market_news()
 
@@ -201,7 +203,6 @@ class NewsService:
                     "image_url": article.get("image_url" if is_newsdata else "urlToImage")
                 })
             
-            # Add AI Sentiment
             articles = await cls._add_sentiment(articles)
 
             result = {"articles": articles, "total": len(articles)}
