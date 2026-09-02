@@ -1,6 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.utils import formatdate
 from typing import Optional
 import os
 from config import EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASSWORD, EMAIL_FROM_NAME, DEV_SHOW_OTP
@@ -10,7 +11,7 @@ class EmailService:
     
     @staticmethod
     def send_otp_email(to_email: str, otp: str, name: str = "User") -> bool:
-        """Send OTP verification email"""
+        """Send OTP verification email with RFC 5322 compliant dual text/html MIME structure"""
         
         # In dev mode with explicit flag, print to console
         if DEV_SHOW_OTP:
@@ -31,9 +32,21 @@ class EmailService:
             msg = MIMEMultipart('alternative')
             msg['From'] = f"{EMAIL_FROM_NAME} <{EMAIL_USER}>"
             msg['To'] = to_email
+            msg['Reply-To'] = EMAIL_USER
+            msg['Date'] = formatdate(localtime=True)
             msg['Subject'] = '🔐 Verify Your WealthSense Account'
             
-            html = f"""
+            # Plain text part for strict spam filter compliance (RFC 2046)
+            text_body = (
+                f"Hi {name},\n\n"
+                f"Welcome to WealthSense!\n"
+                f"Your verification code is: {otp}\n\n"
+                f"This code expires in 10 minutes.\n\n"
+                f"© 2026 WealthSense"
+            )
+            
+            # HTML email body
+            html_body = f"""
             <!DOCTYPE html>
             <html>
             <head>
@@ -73,7 +86,9 @@ class EmailService:
             </html>
             """
             
-            msg.attach(MIMEText(html, 'html'))
+            # Attach plain text first, then HTML as per RFC 2046
+            msg.attach(MIMEText(text_body, 'plain'))
+            msg.attach(MIMEText(html_body, 'html'))
             
             with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT, timeout=10) as server:
                 server.starttls()
@@ -99,9 +114,13 @@ class EmailService:
             msg = MIMEMultipart('alternative')
             msg['From'] = f"{EMAIL_FROM_NAME} <{EMAIL_USER}>"
             msg['To'] = to_email
+            msg['Reply-To'] = EMAIL_USER
+            msg['Date'] = formatdate(localtime=True)
             msg['Subject'] = '🎉 Welcome to WealthSense!'
             
-            html = f"""
+            text_body = f"Hi {name},\n\nWelcome to WealthSense! Your account has been successfully created."
+            
+            html_body = f"""
             <!DOCTYPE html>
             <html>
             <body style="font-family: Arial; max-width: 600px; margin: 0 auto;">
@@ -123,7 +142,8 @@ class EmailService:
             </html>
             """
             
-            msg.attach(MIMEText(html, 'html'))
+            msg.attach(MIMEText(text_body, 'plain'))
+            msg.attach(MIMEText(html_body, 'html'))
             
             with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT, timeout=10) as server:
                 server.starttls()

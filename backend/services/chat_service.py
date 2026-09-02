@@ -133,9 +133,9 @@ class ChatService:
                 else:
                     system_instruction = (
                         "You are WealthSense AI, a premium Indian Stock Market expert. "
-                        "You have access to the user's real-time portfolio, current market highlights, and financial news. "
+                        "You have access to the user's market highlights, news, and portfolio context (noting whether holdings are Sandbox/Demo or live broker-linked). "
                         "Answer ALL questions accurately using the provided CONTEXT DATA. "
-                        "Give specific analysis on holdings if asked. Recommend actions based on data. "
+                        "Give specific analysis on holdings if asked. "
                         "Always be professional and helpful. Disclaimer: 'This is not financial advice.'"
                     )
                 

@@ -1678,7 +1678,7 @@
                   <th style="font-weight: 500; color: var(--text-muted);">Market Price</th>
                   <th style="font-weight: 500; color: var(--text-muted);">Market Value</th>
                   <th style="font-weight: 500; color: var(--text-muted); text-align: right; padding-right: 20px;">
-                    Day P&L</th>
+                    Unrealized P&L</th>
                 </tr>
               </thead>
               <tbody id="portfolioBody">
@@ -1844,10 +1844,10 @@
                   <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
                     <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Algorithm:</span><strong id="mlInfoModelName">RandomForestRegressor</strong></div>
                     <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Version:</span><strong id="mlInfoVersion">1.0.0</strong></div>
-                    <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Training Samples:</span><strong id="mlInfoTrainSamples">-</strong></div>
-                    <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Held-Out Test Samples:</span><strong id="mlInfoTestSamples">-</strong></div>
-                    <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Total Historical Data:</span><strong id="mlInfoTotalSamples">-</strong></div>
-                    <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Last Market Date:</span><strong id="mlInfoLastDate">-</strong></div>
+                    <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Training Samples:</span><strong id="mlInfoTrainSamples">Not available</strong></div>
+                    <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Held-Out Test Samples:</span><strong id="mlInfoTestSamples">Not available</strong></div>
+                    <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Total Historical Data:</span><strong id="mlInfoTotalSamples">Not available</strong></div>
+                    <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Last Market Date:</span><strong id="mlInfoLastDate">Not available</strong></div>
                   </div>
                 </div>
 
@@ -3415,10 +3415,10 @@
       const dSum = mInfo.data_summary || {};
       document.getElementById("mlInfoModelName").textContent = data.model_name || mInfo.name || "RandomForestRegressor";
       document.getElementById("mlInfoVersion").textContent = mInfo.version || "1.0.0";
-      document.getElementById("mlInfoTrainSamples").textContent = dSum.train_samples ? dSum.train_samples.toLocaleString() : "-";
-      document.getElementById("mlInfoTestSamples").textContent = dSum.test_samples ? dSum.test_samples.toLocaleString() : "-";
-      document.getElementById("mlInfoTotalSamples").textContent = dSum.total_samples ? dSum.total_samples.toLocaleString() : "-";
-      document.getElementById("mlInfoLastDate").textContent = dSum.last_historical_date || "-";
+      document.getElementById("mlInfoTrainSamples").textContent = dSum.train_samples ? dSum.train_samples.toLocaleString() : "Not available";
+      document.getElementById("mlInfoTestSamples").textContent = dSum.test_samples ? dSum.test_samples.toLocaleString() : "Not available";
+      document.getElementById("mlInfoTotalSamples").textContent = dSum.total_samples ? dSum.total_samples.toLocaleString() : "Not available";
+      document.getElementById("mlInfoLastDate").textContent = dSum.last_historical_date || "Not available";
 
       // Performance Metrics
       const metrics = data.metrics || {};
