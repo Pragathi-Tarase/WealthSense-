@@ -3,28 +3,21 @@
   "functions": {
     "api/index.py": {
       "includeFiles": "backend/ml/saved_models/**",
-      "excludeFiles": "{frontend/**,.git/**,.vercel/**,.vscode/**}"
+      "excludeFiles": "{public/**,.git/**,.vercel/**,.vscode/**}"
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.py"
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/auth/(.*)",
-      "dest": "/api/index.py"
+      "source": "/auth/(.*)",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/",
-      "dest": "/frontend/intro.html"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/$1"
+      "source": "/",
+      "destination": "/intro.html"
     }
   ]
 }

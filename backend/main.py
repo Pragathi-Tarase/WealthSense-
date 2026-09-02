@@ -653,8 +653,11 @@ async def get_broker_status(authorization: Optional[str] = Header(None)):
 # STATIC FILES (FRONTEND)
 # =========================
 
-frontend_path = Path(__file__).parent.parent / "frontend"
+frontend_path = Path(__file__).parent.parent / "public"
+if not frontend_path.exists():
+    frontend_path = Path(__file__).parent.parent / "frontend"
+
 if frontend_path.exists():
     app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
 else:
-    print(f"WARNING: Frontend path not found at {frontend_path}")
+    print(f"WARNING: Static path not found at {frontend_path}")
