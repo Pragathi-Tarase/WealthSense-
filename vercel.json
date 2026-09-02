@@ -6,22 +6,25 @@
       "excludeFiles": "{frontend/**,.git/**,.vercel/**,.vscode/**}"
     }
   },
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.py"
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
     },
     {
-      "source": "/auth/(.*)",
-      "destination": "/api/index.py"
+      "src": "/auth/(.*)",
+      "dest": "/api/index.py"
     },
     {
-      "source": "/",
-      "destination": "/frontend/intro.html"
+      "src": "/",
+      "dest": "/frontend/intro.html"
     },
     {
-      "source": "/(.*)",
-      "destination": "/frontend/$1"
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/$1"
     }
   ]
 }
