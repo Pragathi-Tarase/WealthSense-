@@ -358,8 +358,10 @@ async def register_user(req: RegistrationRequest, db: Session = Depends(get_db))
         success = email_service.send_otp_email(email, otp_code, req.name)
         
         if not success and not DEV_SHOW_OTP:
-             # In production we might rollback, but for now we proceed
-             pass
+            raise HTTPException(
+                status_code=500,
+                detail="Unable to send verification email. Please check server EMAIL_USER and EMAIL_PASSWORD configuration."
+            )
 
     except HTTPException:
         raise

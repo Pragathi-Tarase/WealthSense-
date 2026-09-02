@@ -12,8 +12,8 @@ class EmailService:
     def send_otp_email(to_email: str, otp: str, name: str = "User") -> bool:
         """Send OTP verification email"""
         
-        # In dev mode, just print to console
-        if DEV_SHOW_OTP or not EMAIL_USER or not EMAIL_PASSWORD:
+        # In dev mode with explicit flag, print to console
+        if DEV_SHOW_OTP:
             print(f"\n{'='*60}")
             print(f"[EMAIL] EMAIL OTP (DEV MODE)")
             print(f"{'='*60}")
@@ -22,15 +22,17 @@ class EmailService:
             print(f"OTP: {otp}")
             print(f"{'='*60}\n")
             return True
+
+        if not EMAIL_USER or not EMAIL_PASSWORD:
+            print(f"[WARNING] Cannot send OTP email to {to_email}: EMAIL_USER or EMAIL_PASSWORD environment variables are not configured.")
+            return False
         
         try:
-            # Create message
             msg = MIMEMultipart('alternative')
             msg['From'] = f"{EMAIL_FROM_NAME} <{EMAIL_USER}>"
             msg['To'] = to_email
             msg['Subject'] = '🔐 Verify Your WealthSense Account'
             
-            # HTML email body
             html = f"""
             <!DOCTYPE html>
             <html>
@@ -71,29 +73,26 @@ class EmailService:
             </html>
             """
             
-            # Attach HTML content
             msg.attach(MIMEText(html, 'html'))
             
-            # Send email
-            with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
+            with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT, timeout=10) as server:
                 server.starttls()
                 server.login(EMAIL_USER, EMAIL_PASSWORD)
                 server.send_message(msg)
             
-            print(f"[SUCCESS] OTP email sent to {to_email}")
+            print(f"[SUCCESS] OTP email sent successfully to {to_email}")
             return True
             
         except Exception as e:
-            print(f"[ERROR] Email sending failed: {str(e)}")
-            print(f"[EMAIL] DEV MODE - OTP for {to_email}: {otp}")
+            print(f"[ERROR] Email sending failed to {to_email}: {str(e)}")
             return False
     
     @staticmethod
     def send_welcome_email(to_email: str, name: str) -> bool:
         """Send welcome email after successful registration"""
         
-        if DEV_SHOW_OTP or not EMAIL_USER:
-            print(f"[EMAIL] Welcome email would be sent to {to_email}")
+        if DEV_SHOW_OTP or not EMAIL_USER or not EMAIL_PASSWORD:
+            print(f"[EMAIL] Welcome email skipped for {to_email} (Dev mode or missing credentials)")
             return True
         
         try:
@@ -119,9 +118,6 @@ class EmailService:
                         <li>💬 Chat with our AI assistant</li>
                         <li>📰 Stay updated with market news</li>
                     </ul>
-                    <p style="text-align: center; margin-top: 30px;">
-                        <a href="http://127.0.0.1:8000/login.html" style="background: #00f8ff; color: #000; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">Login Now</a>
-                    </p>
                 </div>
             </body>
             </html>
@@ -129,7 +125,7 @@ class EmailService:
             
             msg.attach(MIMEText(html, 'html'))
             
-            with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
+            with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT, timeout=10) as server:
                 server.starttls()
                 server.login(EMAIL_USER, EMAIL_PASSWORD)
                 server.send_message(msg)
@@ -137,7 +133,7 @@ class EmailService:
             return True
             
         except Exception as e:
-            print(f"Welcome email failed: {str(e)}")
+            print(f"Welcome email failed to {to_email}: {str(e)}")
             return False
 
 email_service = EmailService()
